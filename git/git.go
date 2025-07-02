@@ -22,12 +22,20 @@ func GetLatestSemverTag(prefix string) (string, error) {
 	cmd := exec.Command("git", "describe", "--tags", "--abbrev=0", "--match", tagPattern)
 	output, err := cmd.Output()
 	if err != nil {
-		return "v0.0.0", nil
+		if prefix == "" {
+			return "v0.0.0", nil
+		} else {
+			return fmt.Sprintf("%s/v0.0.0", prefix), nil
+		}
 	}
 
 	tagsAt, err := ListTagsAt(strings.TrimSpace(string(output)))
 	if err != nil {
-		return "v0.0.0", nil
+		if prefix == "" {
+			return "v0.0.0", nil
+		} else {
+			return fmt.Sprintf("%s/v0.0.0", prefix), nil
+		}
 	}
 
 	var largestTag string
