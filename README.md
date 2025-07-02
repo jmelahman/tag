@@ -18,7 +18,7 @@ Tag 'v1.0.1' created and pushed to origin.
 ## Usage
 
 By default, `tag` will increment the smallest digit following [SemVer precedence](https://semver.org/#semantic-versioning-specification-semver).
-Incrementing a specific is achieved by passing the respective flag: `--major`, `--minor`, `--patch`.
+Incrementing a specific version is achieved by passing the respective flag: `--major`, `--minor`, `--patch`.
 
 Tags can be automatically pushed to a remote repository by passing `--push`.
 
