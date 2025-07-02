@@ -74,6 +74,10 @@ func main() {
 				os.Exit(1)
 			}
 
+			if prefix != "" {
+				nextVersion = fmt.Sprint(prefix, "/", nextVersion)
+			}
+
 			if metadata != "" {
 				nextVersion = fmt.Sprint(nextVersion, "+", metadata)
 			}
