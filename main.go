@@ -40,7 +40,7 @@ func main() {
 			return nil
 		},
 		Run: func(cmd *cobra.Command, args []string) {
-			if err := git.FetchSemverTags(remote); err != nil {
+			if err := git.FetchSemverTags(remote, prefix); err != nil {
 				fmt.Printf("Error fetching tags: %v\n", err)
 				os.Exit(1)
 			}

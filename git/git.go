@@ -118,8 +118,12 @@ func CreateAndPushTag(tag string, remote string) error {
 	return nil
 }
 
-func FetchSemverTags(remote string) error {
-	cmd := exec.Command("git", "fetch", "--quiet", "--prune", remote, "refs/tags/v*:refs/tags/v*")
+func FetchSemverTags(remote string, prefix string) error {
+	tagPattern := "refs/tags/v*:refs/tags/v*"
+	if prefix != "" {
+		tagPattern = fmt.Sprintf("refs/tags/%s/%s:refs/tags/%s/%s", prefix, "v*", prefix, "v*")
+	}
+	cmd := exec.Command("git", "fetch", "--quiet", "--prune", remote, tagPattern)
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
 		return fmt.Errorf("failed to fetch tags from %s: %w", remote, err)
