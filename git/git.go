@@ -31,12 +31,8 @@ func GetLatestSemverTag(prefix, suffix string) (string, error) {
 	cmd := exec.Command("git", "describe", "--tags", "--abbrev=0", "--match", tagPattern)
 	output, err := cmd.Output()
 	if err != nil {
-		log.Debug("GetLatestSemverTag: no tags found matching pattern, returning v0.0.0")
-		if prefix == "" {
-			return "v0.0.0", nil
-		} else {
-			return fmt.Sprintf("%s/v0.0.0", prefix), nil
-		}
+		log.Debug("GetLatestSemverTag: no tags found matching pattern")
+		return "", nil
 	}
 
 	matchedTag := strings.TrimSpace(string(output))
@@ -45,11 +41,7 @@ func GetLatestSemverTag(prefix, suffix string) (string, error) {
 	tagsAt, err := ListTagsAt(matchedTag)
 	if err != nil {
 		log.WithError(err).WithField("matchedTag", matchedTag).Debug("GetLatestSemverTag: error listing tags at")
-		if prefix == "" {
-			return "v0.0.0", nil
-		} else {
-			return fmt.Sprintf("%s/v0.0.0", prefix), nil
-		}
+		return "", fmt.Errorf("failed to list tags at %s: %w", matchedTag, err)
 	}
 
 	log.WithField("count", len(tagsAt)).WithField("matchedTag", matchedTag).Debug("GetLatestSemverTag: found tags at")
@@ -264,10 +256,7 @@ func GetLatestStableSemverTag(prefix string) (string, error) {
 	output, err := cmd.Output()
 	if err != nil {
 		log.WithError(err).Debug("GetLatestStableSemverTag: error listing tags")
-		if prefix == "" {
-			return "v0.0.0", nil
-		}
-		return fmt.Sprintf("%s/v0.0.0", prefix), nil
+		return "", fmt.Errorf("failed to list tags: %w", err)
 	}
 
 	tagList := strings.Split(strings.TrimSpace(string(output)), "\n")
@@ -311,10 +300,8 @@ func GetLatestStableSemverTag(prefix string) (string, error) {
 	}
 
 	if largestTag == "" {
-		if prefix == "" {
-			return "v0.0.0", nil
-		}
-		return fmt.Sprintf("%s/v0.0.0", prefix), nil
+		log.Debug("GetLatestStableSemverTag: no stable tags found")
+		return "", nil
 	}
 
 	log.WithField("latestTag", largestTag).Debug("GetLatestStableSemverTag: returning latest stable tag")

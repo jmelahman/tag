@@ -166,12 +166,19 @@ func main() {
 			fmt.Printf("Error: %v\n", err)
 			os.Exit(1)
 		}
+		if latestTag == "" {
+			fmt.Println("No semver tags found. Create an initial tag with: git tag v0.0.0 && git push origin v0.0.0")
+			os.Exit(0)
+		}
 
 		// When using a suffix, also check the latest stable tag to ensure we
 		// don't create a pre-release based on an older version than the latest stable
 		if suffix != "" {
 			latestStableTag, err := git.GetLatestStableSemverTag(prefix)
-			if err == nil && latestStableTag != "" {
+			if err != nil {
+				log.WithError(err).Debug("Failed to get latest stable tag, skipping stable base check")
+			}
+			if latestStableTag != "" {
 				stableVer, stableErr := semver.ParseSemver(latestStableTag)
 				currentVer, currentErr := semver.ParseSemver(latestTag)
 
